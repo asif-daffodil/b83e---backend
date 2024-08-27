@@ -15,6 +15,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+// multer
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname);
+    }
+})
+const upload = multer({ storage: storage });
+
 // route
 app.get('/', (req, res) => {
     res.send('Hello World');
@@ -55,6 +67,11 @@ app.get('/cookie', (req, res) => {
 // get cookie
 app.get('/getcookie', (req, res) => {
     res.send(req.cookies);
+})
+
+// upload file
+app.post('/upload', upload.single("image"), (req, res) => {
+    res.send('File uploaded');
 })
 
 // create server
